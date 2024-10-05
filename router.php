@@ -12,12 +12,19 @@ $routes = [
     "/employees/delete" => "controllers/employees/delete.php",
     "/employees/get" => "controllers/employees/get.php",
     "/employees/profile" => "controllers/index.php",
-    "/employees/update_profile" => "controllers/employees/update_profile.php", // New Route
-    "/files" => "files.php",
+    "/employees/update_profile" => "controllers/employees/update_profile.php",
+    "/leaves/request" => "controllers/leaves/request.php",
+    "/leaves/manage" => "controllers/leaves/manage.php",
+    "/leaves/approve" => "controllers/leaves/approve.php",
+    "/leaves/reject" => "controllers/leaves/reject.php",
+    "/leaves/list" => "controllers/leaves/list.php",
+    "/users" => "controllers/users/index.php",
+    "/users/edit" => "controllers/users/edit.php",
+    "/users/delete" => "controllers/users/delete.php",
+    "/files" => "files_template.php",
     "/allfile" => "allfile.php",
     // Add other routes as needed
 ];
-
 
 function abort($code = 404)
 {
@@ -43,3 +50,4 @@ function routeToController($uri, $routes)
 }
 
 routeToController($uri, $routes);
+?>

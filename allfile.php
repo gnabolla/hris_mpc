@@ -40,7 +40,7 @@ function listFilesAndContents($dir, $excludeDirs = [], $excludeFiles = []) {
 $baseDir = __DIR__;
 
 // Directories to exclude
-$excludeDirs = ['assets']; // Add other directories to exclude if needed
+$excludeDirs = ['assets','.git']; // Add other directories to exclude if needed
 
 // Files to exclude
 $excludeFiles = ['files.php']; // Add other files to exclude if needed
