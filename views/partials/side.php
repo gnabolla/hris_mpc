@@ -8,17 +8,22 @@
             <a href="/"><i class="fas fa-home"></i> Dashboard</a>
         </li>
         <?php if (hasRole('admin')): ?>
-                <li>
-                    <a href="#employeemenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle no-caret-down"><i class="fas fa-user-shield"></i> Employee Management</a>
-                    <ul class="collapse list-unstyled" id="employeemenu">
-                        <li>
-                            <a href="/employees"><i class="fas fa-users"></i> Employee Management</a>
-                        </li>
-                        <li>
-                            <a href="/leaves/manage"><i class="fas fa-calendar"></i> Manage Leave Requests</a>
-                        </li>
-                    </ul>
-                </li>
+            <li>
+                <a href="#employeemenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle no-caret-down"><i class="fas fa-user-shield"></i> Employee Management</a>
+                <ul class="collapse list-unstyled" id="employeemenu">
+                    <li>
+                        <a href="/employees"><i class="fas fa-users"></i> Employee Management</a>
+                    </li>
+                    <li>
+                        <a href="/leaves/manage"><i class="fas fa-calendar"></i> Manage Leave Requests</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/attendance_logs">
+                    <i class="fas fa-clock"></i> Attendance Logs
+                </a>
+            </li>
             <li class="nav-item">
                 <a href="/users" class="nav-link"><i class="fas fa-user-friends"></i> Users</a>
             </li>

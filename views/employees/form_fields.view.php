@@ -57,7 +57,13 @@
     </div>
 </div>
 
-<div class="mb-3">
+<div class="row">
+<div class="col-md-6 mb-3">
     <label>Emergency Contact Information</label>
     <input type="text" name="emergency_contact" class="form-control" value="<?= htmlspecialchars($employee['emergency_contact'] ?? '') ?>" required>
+</div>
+<div class="col-md-6 mb-3">
+    <label for="rfid" class="form-label">RFID Code</label>
+    <input type="text" name="rfid" class="form-control" placeholder="Enter RFID code">
+</div>
 </div>

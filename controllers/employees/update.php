@@ -7,6 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $config = require('config.php');
     $db = new Database($config['database']);
 
+    // Collect form data
     $data = [
         'full_name' => $_POST['full_name'],
         'employee_id' => $_POST['employee_id'],
@@ -19,10 +20,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'salary' => $_POST['salary'],
         'bank_account_details' => $_POST['bank_account_details'],
         'emergency_contact' => $_POST['emergency_contact'],
+        'rfid' => !empty($_POST['rfid']) ? $_POST['rfid'] : null,
     ];
 
-    $db->update('employees', $data, ['id' => $id]);
+    // Handle Image Upload
+    try {
+        $imagePath = uploadImage('image');
+        if ($imagePath) {
+            $data['image_path'] = $imagePath;
 
-    header('Location: /employees');
-    exit();
+            // Optionally, delete the old image if it exists
+            $oldImage = $db->query("SELECT image_path FROM employees WHERE id = :id", ['id' => $id])->fetch()['image_path'];
+            if ($oldImage && file_exists(__DIR__ . '/../..' . $oldImage)) {
+                unlink(__DIR__ . '/../..' . $oldImage);
+            }
+        }
+    } catch (Exception $e) {
+        $_SESSION['error'] = $e->getMessage();
+        header('Location: /employees');
+        exit();
+    }
+
+    // Update the employee in the database
+    try {
+        $setPart = '';
+        foreach ($data as $column => $value) {
+            $setPart .= "{$column} = :{$column}, ";
+        }
+        $setPart = rtrim($setPart, ', ');
+
+        $params = $data;
+        $params['id'] = $id;
+
+        $sql = "UPDATE employees SET {$setPart} WHERE id = :id";
+        $db->query($sql, $params);
+
+        $_SESSION['success'] = 'Employee updated successfully.';
+        header('Location: /employees');
+        exit();
+    } catch (Exception $e) {
+        $_SESSION['error'] = 'Error updating employee: ' . $e->getMessage();
+        header('Location: /employees');
+        exit();
+    }
 }
+?>

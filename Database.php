@@ -23,6 +23,7 @@ class Database
             // Handle connection errors gracefully
             throw new Exception('Database connection error: ' . $e->getMessage());
         }
+        $this->connection->exec("SET time_zone = '+08:00'");
     }
 
     public function query($query, $params = [])

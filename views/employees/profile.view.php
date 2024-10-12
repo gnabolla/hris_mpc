@@ -4,6 +4,11 @@
             <h2 class="page-title">My Profile</h2>
             <div class="card">
                 <div class="card-body">
+                    <?php if (!empty($employee['image_path'])): ?>
+                        <img src="<?= htmlspecialchars($employee['image_path']) ?>" alt="Profile Image" class="img-thumbnail mb-3" width="150">
+                    <?php else: ?>
+                        <img src="/assets/img/default_avatar.png" alt="Profile Image" class="img-thumbnail mb-3" width="150">
+                    <?php endif; ?>
                     <p><strong>Full Name:</strong> <?= htmlspecialchars($employee['full_name']) ?></p>
                     <p><strong>Employee ID:</strong> <?= htmlspecialchars($employee['employee_id']) ?></p>
                     <p><strong>Date of Birth:</strong> <?= htmlspecialchars($employee['date_of_birth']) ?></p>

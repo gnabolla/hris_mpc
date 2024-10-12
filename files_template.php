@@ -1,6 +1,7 @@
 <?php
 // Array of file paths relative to the script's location
 $files = [
+    'hris_db.sql',
     'Database.php',
     'config.php',
     'functions.php',

@@ -1,6 +1,5 @@
 <?php
 $uri = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
-
 $routes = [
     "/" => "controllers/index.php",
     "/login" => "controllers/login.php",
@@ -23,6 +22,13 @@ $routes = [
     "/users/delete" => "controllers/users/delete.php",
     "/files" => "files_template.php",
     "/allfile" => "allfile.php",
+    "/attendance" => "controllers/attendance_page.php",
+    "/attendance/log" => "controllers/attendance_log.php", // Updated
+    "/attendance/clocked_in" => "controllers/attendance_clocked_in.php", // Added
+    "/attendance_logs" => "controllers/attendance_logs.php",
+    // Old routes commented out
+    // "/attendance/log" => "controllers/attendance.php",
+    // "/attendance/api" => "controllers/attendance_api.php",
     // Add other routes as needed
 ];
 
@@ -50,4 +56,3 @@ function routeToController($uri, $routes)
 }
 
 routeToController($uri, $routes);
-?>

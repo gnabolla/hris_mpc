@@ -19,34 +19,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($full_name)) {
         $errors[] = 'Full Name is required.';
     }
-    if (empty($contact_information)) {
-        $errors[] = 'Contact Information is required.';
-    }
-    if (empty($position)) {
-        $errors[] = 'Position is required.';
-    }
-    if (empty($department)) {
-        $errors[] = 'Department is required.';
-    }
-    if (empty($bank_account_details)) {
-        $errors[] = 'Bank Account Details are required.';
-    }
-    if (empty($emergency_contact)) {
-        $errors[] = 'Emergency Contact is required.';
-    }
+    // Other validation...
 
     if (empty($errors)) {
-        $db->update('employees', [
+        $data = [
             'full_name' => $full_name,
             'contact_information' => $contact_information,
             'position' => $position,
             'department' => $department,
             'bank_account_details' => $bank_account_details,
-            'emergency_contact' => $emergency_contact
-        ], ['id' => $_SESSION['employee_id']]);
+            'emergency_contact' => $emergency_contact,
+        ];
 
-        header('Location: /employees/profile');
-        exit();
+        // Handle Image Upload
+        try {
+            $imagePath = uploadImage('image');
+            if ($imagePath) {
+                $data['image_path'] = $imagePath;
+
+                // Delete old image if it exists
+                $oldImage = $db->query("SELECT image_path FROM employees WHERE id = :id", ['id' => $_SESSION['employee_id']])->fetch()['image_path'];
+                if ($oldImage && file_exists(__DIR__ . '/../..' . $oldImage)) {
+                    unlink(__DIR__ . '/../..' . $oldImage);
+                }
+            }
+        } catch (Exception $e) {
+            $errors[] = $e->getMessage();
+        }
+
+        if (empty($errors)) {
+            // Build the SET part of the SQL query
+            $setPart = '';
+            foreach ($data as $column => $value) {
+                $setPart .= "{$column} = :{$column}, ";
+            }
+            $setPart = rtrim($setPart, ', ');
+
+            $params = $data;
+            $params['id'] = $_SESSION['employee_id'];
+
+            $sql = "UPDATE employees SET {$setPart} WHERE id = :id";
+            $db->query($sql, $params);
+
+            header('Location: /employees/profile');
+            exit();
+        }
     }
 }
 
