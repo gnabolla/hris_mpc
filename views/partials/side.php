@@ -20,7 +20,12 @@
                 </ul>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/attendance_logs">
+                <a class="nav-link" href="/attendance"> <!-- Updated from /attendance_logs -->
+                    <i class="fas fa-user-check"></i> Attendance Scan
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/attendance/logs"> <!-- Updated from /attendance_logs -->
                     <i class="fas fa-clock"></i> Attendance Logs
                 </a>
             </li>

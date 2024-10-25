@@ -48,22 +48,8 @@
                     </div>
                     <div class="card-body p-4">
                         <div class="row" id="clocked-in-employees">
-                            <?php foreach ($clocked_in_employees as $employee): ?>
-                                <div class="col-md-4 col-lg-3 mb-4">
-                                    <div class="card h-100">
-                                        <img src="<?= !empty($employee['image_path']) ? htmlspecialchars($employee['image_path']) : '/assets/img/default_avatar.png' ?>" class="card-img-top" alt="Employee Image" style="height: 150px; object-fit: cover;">
-                                        <div class="card-body text-center">
-                                            <h6 class="card-title mb-0"><?= htmlspecialchars($employee['full_name']) ?></h6>
-                                            <small class="text-muted"><?= htmlspecialchars($employee['clock_in_time']) ?></small>
-                                        </div>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
+                            <!-- Content will be dynamically loaded via JavaScript -->
                         </div>
-                        <!-- If no employees are clocked in -->
-                        <?php if (empty($clocked_in_employees)): ?>
-                            <p class="text-center">No employees have clocked in yet.</p>
-                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -103,6 +89,9 @@
             // Focus the input field on page load
             rfidInput.focus();
 
+            // Initial load of clocked-in employees
+            refreshClockedInEmployees();
+
             // Listen for Enter key to submit the form
             rfidInput.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
@@ -120,31 +109,31 @@
 
                 // Send AJAX request
                 fetch('/attendance/log', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        body: new URLSearchParams({
-                            'rfid': rfid
-                        })
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: new URLSearchParams({
+                        'rfid': rfid
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status === 'success') {
-                            showMessage(data.message, 'success');
-                            displayRecentEmployee(data.employee);
-                            refreshClockedInEmployees();
-                        } else {
-                            showMessage(data.message, 'danger');
-                        }
-                        rfidInput.value = '';
-                        rfidInput.focus();
-                    })
-                    .catch(error => {
-                        showMessage('An error occurred while recording attendance.', 'danger');
-                        console.error('Error:', error);
-                    });
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        showMessage(data.message, 'success');
+                        displayRecentEmployee(data.employee);
+                        refreshClockedInEmployees();
+                    } else {
+                        showMessage(data.message, 'danger');
+                    }
+                    rfidInput.value = '';
+                    rfidInput.focus();
+                })
+                .catch(error => {
+                    showMessage('An error occurred while recording attendance.', 'danger');
+                    console.error('Error:', error);
+                });
             }
 
             function showMessage(message, type) {
@@ -172,9 +161,10 @@
                 fetch('/attendance/clocked_in')
                     .then(response => response.json())
                     .then(data => {
-                        // Update the clocked-in employees list
+                        // Clear the container before adding new content
                         clockedInEmployeesContainer.innerHTML = '';
-                        if (data.clocked_in_employees.length > 0) {
+                        
+                        if (data.clocked_in_employees && data.clocked_in_employees.length > 0) {
                             data.clocked_in_employees.forEach(employee => {
                                 const cardHTML = `
                                     <div class="col-md-4 col-lg-3 mb-4">
@@ -195,6 +185,7 @@
                     })
                     .catch(error => {
                         console.error('Error fetching clocked-in employees:', error);
+                        clockedInEmployeesContainer.innerHTML = '<p class="text-center text-danger">Error loading clocked-in employees.</p>';
                     });
             }
 
@@ -211,6 +202,9 @@
                     return map[m];
                 });
             }
+
+            // Set up periodic refresh of clocked-in employees (every 30 seconds)
+            setInterval(refreshClockedInEmployees, 30000);
         });
     </script>
 </div>

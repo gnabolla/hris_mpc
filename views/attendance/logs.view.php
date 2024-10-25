@@ -8,7 +8,7 @@
         </div>
 
         <!-- Date Filter Form -->
-        <form method="GET" action="/attendance_logs" class="row mb-4">
+        <form method="GET" action="/attendance/logs" class="row mb-4">  <!-- Updated URL -->
             <div class="col-md-3">
                 <input type="date" name="date" class="form-control" value="<?= htmlspecialchars($date) ?>">
             </div>

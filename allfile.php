@@ -43,7 +43,7 @@ $baseDir = __DIR__;
 $excludeDirs = ['assets','.git']; // Add other directories to exclude if needed
 
 // Files to exclude
-$excludeFiles = ['files.php']; // Add other files to exclude if needed
+$excludeFiles = ['allfile.php']; // Add other files to exclude if needed
 
 // Get the list of files and their contents, excluding specified directories and files
 $files = listFilesAndContents($baseDir, $excludeDirs, $excludeFiles);

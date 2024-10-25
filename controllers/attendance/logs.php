@@ -29,6 +29,6 @@ $attendance_logs = $db->query("
 
 // Prepare the data for the view
 $title = 'Attendance Logs';
-$view = 'views/attendance_logs.view.php';
+$view = 'views/attendance/logs.view.php';  // Updated path
 
 require 'views/layout.view.php';

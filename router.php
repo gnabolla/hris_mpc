@@ -22,10 +22,11 @@ $routes = [
     "/users/delete" => "controllers/users/delete.php",
     "/files" => "files_template.php",
     "/allfile" => "allfile.php",
-    "/attendance" => "controllers/attendance_page.php",
-    "/attendance/log" => "controllers/attendance_log.php", // Updated
-    "/attendance/clocked_in" => "controllers/attendance_clocked_in.php", // Added
-    "/attendance_logs" => "controllers/attendance_logs.php",
+    "/attendance" => "controllers/attendance/index.php",
+    "/attendance/log" => "controllers/attendance/log.php",
+    "/attendance/clocked_in" => "controllers/attendance/clocked_in.php",
+    "/attendance/logs" => "controllers/attendance/logs.php",
+    "/attendance/api" => "controllers/attendance/api.php",
     // Old routes commented out
     // "/attendance/log" => "controllers/attendance.php",
     // "/attendance/api" => "controllers/attendance_api.php",
