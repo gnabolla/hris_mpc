@@ -27,10 +27,13 @@ $routes = [
     "/attendance/clocked_in" => "controllers/attendance/clocked_in.php",
     "/attendance/logs" => "controllers/attendance/logs.php",
     "/attendance/api" => "controllers/attendance/api.php",
-    // Old routes commented out
-    // "/attendance/log" => "controllers/attendance.php",
-    // "/attendance/api" => "controllers/attendance_api.php",
-    // Add other routes as needed
+
+    "/payslips" => "controllers/payslips/index.php",
+    "/payslips/print" => "controllers/payslips/print.php",  // NEW for employees
+
+    "/payroll" => "controllers/payroll/index.php",
+    "/payroll/generate" => "controllers/payroll/generate.php",
+    "/payroll/print" => "controllers/payroll/print.php",    // NEW for admin
 ];
 
 function abort($code = 404)

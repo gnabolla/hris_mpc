@@ -7,9 +7,13 @@
         <li>
             <a href="/"><i class="fas fa-home"></i> Dashboard</a>
         </li>
+
         <?php if (hasRole('admin')): ?>
+            <!-- Admin-specific menu -->
             <li>
-                <a href="#employeemenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle no-caret-down"><i class="fas fa-user-shield"></i> Employee Management</a>
+                <a href="#employeemenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle no-caret-down">
+                    <i class="fas fa-user-shield"></i> Employee Management
+                </a>
                 <ul class="collapse list-unstyled" id="employeemenu">
                     <li>
                         <a href="/employees"><i class="fas fa-users"></i> Employee Management</a>
@@ -19,13 +23,14 @@
                     </li>
                 </ul>
             </li>
+
             <li class="nav-item">
-                <a class="nav-link" href="/attendance"> <!-- Updated from /attendance_logs -->
+                <a class="nav-link" href="/attendance">
                     <i class="fas fa-user-check"></i> Attendance Scan
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/attendance/logs"> <!-- Updated from /attendance_logs -->
+                <a class="nav-link" href="/attendance/logs">
                     <i class="fas fa-clock"></i> Attendance Logs
                 </a>
             </li>
@@ -35,12 +40,19 @@
             <li>
                 <a href="/settings"><i class="fas fa-cog"></i> Settings</a>
             </li>
-        <?php elseif (hasRole('employee')): ?>
 
+            <!-- NEW: admin link to payroll -->
             <li>
-                <a href="#leavemenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle no-caret-down"><i class="fas fa-calendar-check"></i> Leave</a>
-                <ul class="collapse list-unstyled" id="leavemenu">
+                <a href="/payroll"><i class="fas fa-file-invoice-dollar"></i> Payroll</a>
+            </li>
 
+        <?php elseif (hasRole('employee')): ?>
+            <!-- Employee-specific menu -->
+            <li>
+                <a href="#leavemenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle no-caret-down">
+                    <i class="fas fa-calendar-check"></i> Leave
+                </a>
+                <ul class="collapse list-unstyled" id="leavemenu">
                     <li class="nav-item">
                         <a href="/leaves/request" class="nav-link"><i class="fas fa-calendar-plus"></i> Request Leave</a>
                     </li>
@@ -54,6 +66,13 @@
             </li>
             <li class="nav-item">
                 <a href="/employees/update_profile" class="nav-link"><i class="fas fa-edit"></i> Update Profile</a>
+            </li>
+
+            <!-- NEW: employee link to My Payslips -->
+            <li class="nav-item">
+                <a href="/payslips" class="nav-link">
+                    <i class="fas fa-money-bill-alt"></i> My Payslips
+                </a>
             </li>
         <?php endif; ?>
     </ul>
