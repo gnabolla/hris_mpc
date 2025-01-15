@@ -37,9 +37,6 @@
             <li class="nav-item">
                 <a href="/users" class="nav-link"><i class="fas fa-user-friends"></i> Users</a>
             </li>
-            <li>
-                <a href="/settings"><i class="fas fa-cog"></i> Settings</a>
-            </li>
 
             <!-- NEW: admin link to payroll -->
             <li>
