@@ -25,7 +25,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_name'] = $user['name'];
             $_SESSION['user_role'] = $user['role'];
             $_SESSION['employee_id'] = $user['employee_id'];
-            header('Location: /');
+
+            // Redirect using BASE_URL so the user goes to http://localhost/hris_mpc/ not http://localhost/
+            header('Location: ' . BASE_URL . '/');
             exit();
         } else {
             $errors[] = 'Email or password is incorrect.';
@@ -35,4 +37,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $title = 'Login';
 require "views/login.view.php";
-?>

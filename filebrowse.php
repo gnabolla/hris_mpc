@@ -55,13 +55,11 @@ $detectedFeatures = detectFeatures();
         }
 
         .folder {
-            cursor: pointer;
             color: #d4ac0d;
             margin: 5px 0;
         }
 
         .file {
-            cursor: pointer;
             color: #666;
             margin: 5px 0;
         }
@@ -72,7 +70,7 @@ $detectedFeatures = detectFeatures();
         }
 
         .content {
-            display: none;
+            display: block;
             margin-left: 20px;
             padding: 10px;
             background: #f8f8f8;
@@ -149,20 +147,6 @@ $detectedFeatures = detectFeatures();
 
 <body>
 
-    <div class="action-buttons">
-        <button id="core-button" class="action-button" onclick="showCoreFiles()">
-            <i class="fas fa-code"></i> Show Core Files
-        </button>
-
-        <?php foreach ($detectedFeatures as $feature): ?>
-            <button id="<?php echo htmlspecialchars($feature); ?>-button" 
-                    class="action-button feature-button" 
-                    onclick="showFeatureFiles('<?php echo htmlspecialchars($feature); ?>')">
-                <i class="fas fa-folder-open"></i> Show <?php echo ucfirst(htmlspecialchars($feature)); ?> Files
-            </button>
-        <?php endforeach; ?>
-    </div>
-
     <div id="file-browser">
         <?php
         function listFiles($dir)
@@ -171,30 +155,29 @@ $detectedFeatures = detectFeatures();
 
             echo "<div class='file-tree'>";
             foreach ($files as $file) {
-                if ($file != "." && $file != "..") {
-                    $path = $dir . '/' . $file;
-                    if (is_dir($path)) {
-                        echo "<div class='folder closed'>";
-                        echo "<div class='folder-header' onclick='toggleFolder(event, this)'>";
-                        echo "<i class='fas fa-folder icon'></i>" . htmlspecialchars($file);
-                        echo "</div>";
-                        listFiles($path);
-                        echo "</div>";
-                    } else {
-                        $isCoreFile = isCoreFile($path);
-                        $featureClass = getFeatureClass($path);
-                        $classes = ['file'];
-                        if ($isCoreFile) $classes[] = 'core-file';
-                        if ($featureClass) $classes[] = $featureClass;
+                // Skip current, parent, assets, .git and uploads folders/files
+                if ($file == "." || $file == ".." || $file === "assets" || $file === ".git" || $file === "uploads") continue;
+                $path = $dir . '/' . $file;
+                if (is_dir($path)) {
+                    echo "<div class='folder'>";
+                    echo "<div class='folder-header'>";
+                    echo "<i class='fas fa-folder icon'></i>" . htmlspecialchars($path);
+                    echo "</div>";
+                    listFiles($path);
+                    echo "</div>";
+                } else {
+                    $isCoreFile = isCoreFile($path);
+                    $featureClass = getFeatureClass($path);
+                    $classes = ['file'];
+                    if ($isCoreFile) $classes[] = 'core-file';
+                    if ($featureClass) $classes[] = $featureClass;
 
-                        echo "<div class='" . implode(' ', $classes) . "' " .
-                            "data-path='" . htmlspecialchars($path, ENT_QUOTES) . "' " .
-                            "data-feature='" . htmlspecialchars(getFeatureName($path), ENT_QUOTES) . "' " .
-                            "onclick='loadContent(event, \"" . htmlspecialchars($path, ENT_QUOTES) . "\", this)'>";
-                        echo "<i class='fas fa-file icon'></i>" . htmlspecialchars($file);
-                        echo "<pre class='content'><code class='language-" . pathinfo($file, PATHINFO_EXTENSION) . "'></code></pre>";
-                        echo "</div>";
-                    }
+                    echo "<div class='" . implode(' ', $classes) . "' " .
+                        "data-path='" . htmlspecialchars($path, ENT_QUOTES) . "' " .
+                        "data-feature='" . htmlspecialchars(getFeatureName($path), ENT_QUOTES) . "'>";
+                    echo "<i class='fas fa-file icon'></i>" . htmlspecialchars($path);
+                    echo "<pre class='content'><code class='language-" . pathinfo($file, PATHINFO_EXTENSION) . "'></code></pre>";
+                    echo "</div>";
                 }
             }
             echo "</div>";
@@ -248,124 +231,11 @@ $detectedFeatures = detectFeatures();
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script>
-        // Track the state of each feature group
-        const fileGroupStates = {
-            core: false,
-            features: {}
-        };
-
-        function updateButtonStates() {
-            // Update core button
-            const coreButton = document.getElementById('core-button');
-            if (coreButton) {
-                coreButton.classList.toggle('active', fileGroupStates.core);
-            }
-
-            // Update feature buttons
-            Object.entries(fileGroupStates.features).forEach(([feature, isEnabled]) => {
-                const featureButton = document.getElementById(`${feature}-button`);
-                if (featureButton) {
-                    featureButton.classList.toggle('active', isEnabled);
-                }
-            });
-        }
-
-        function showCoreFiles() {
-            // Toggle the state
-            fileGroupStates.core = !fileGroupStates.core;
-            updateFileVisibility();
-            updateButtonStates();
-        }
-
-        function showFeatureFiles(feature) {
-            // Initialize state if it doesn't exist
-            if (fileGroupStates.features[feature] === undefined) {
-                fileGroupStates.features[feature] = false;
-            }
-
-            // Toggle the state
-            fileGroupStates.features[feature] = !fileGroupStates.features[feature];
-            updateFileVisibility();
-            updateButtonStates();
-        }
-
-        function updateFileVisibility() {
-            // First hide all content
-            document.querySelectorAll('.content').forEach(content => {
-                content.style.display = 'none';
-            });
-
-            // Close all folders
-            document.querySelectorAll('.folder').forEach(folder => {
-                folder.classList.add('closed');
-                const icon = folder.querySelector('.fa-folder, .fa-folder-open');
-                if (icon) {
-                    icon.classList.remove('fa-folder-open');
-                    icon.classList.add('fa-folder');
-                }
-            });
-
-            // Show core files if enabled
-            if (fileGroupStates.core) {
-                expandAndShowFiles('.core-file');
-            }
-
-            // Show enabled feature files
-            Object.entries(fileGroupStates.features).forEach(([feature, isEnabled]) => {
-                if (isEnabled) {
-                    expandAndShowFiles(`.${feature}-feature`);
-                }
-            });
-        }
-
-        function expandAndShowFiles(selector) {
-            // Expand folders containing target files
-            document.querySelectorAll(selector).forEach(file => {
-                let parent = file.parentElement;
-                while (parent && parent.classList.contains('file-tree')) {
-                    const folderContainer = parent.parentElement;
-                    if (folderContainer && folderContainer.classList.contains('folder')) {
-                        folderContainer.classList.remove('closed');
-                        const icon = folderContainer.querySelector('.fa-folder, .fa-folder-open');
-                        if (icon) {
-                            icon.classList.remove('fa-folder');
-                            icon.classList.add('fa-folder-open');
-                        }
-                    }
-                    parent = folderContainer ? folderContainer.parentElement : null;
-                }
-            });
-
-            // Load content for all matching files
-            document.querySelectorAll(selector).forEach(file => {
-                const path = file.getAttribute('data-path');
-                loadContent(new Event('click'), path, file, true);
-            });
-        }
-
-        function toggleFolder(event, element) {
-            event.stopPropagation();
-
-            const folderContainer = element.parentElement;
-            folderContainer.classList.toggle('closed');
-
-            const icon = element.querySelector('.fa-folder, .fa-folder-open');
-            if (icon) {
-                icon.classList.toggle('fa-folder');
-                icon.classList.toggle('fa-folder-open');
-            }
-        }
-
         function loadContent(event, path, element, forceShow = false) {
             event.stopPropagation();
 
             let contentElement = element.querySelector('.content');
             let codeElement = element.querySelector('code');
-
-            if (contentElement.style.display === 'block' && !forceShow) {
-                contentElement.style.display = 'none';
-                return;
-            }
 
             if (!codeElement.textContent || forceShow) {
                 fetch(window.location.href, {
@@ -379,17 +249,20 @@ $detectedFeatures = detectFeatures();
                     .then(content => {
                         codeElement.textContent = content;
                         Prism.highlightElement(codeElement);
-                        contentElement.style.display = 'block';
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        contentElement.textContent = 'Error loading file content';
-                        contentElement.style.display = 'block';
+                        codeElement.textContent = 'Error loading file content';
                     });
-            } else {
-                contentElement.style.display = 'block';
             }
         }
+
+        window.onload = function() {
+            document.querySelectorAll('.file').forEach(file => {
+                const path = file.getAttribute('data-path');
+                loadContent(new Event('click'), path, file, true);
+            });
+        };
     </script>
 </body>
 

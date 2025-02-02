@@ -1,10 +1,22 @@
 <?php
 
+/**
+ * Filters an array using a callback function.
+ *
+ * @param array $items
+ * @param callable $callback
+ * @return array
+ */
 function filter(array $items, callable $callback): array
 {
     return array_filter($items, $callback);
 }
 
+/**
+ * Dump and die for debugging.
+ *
+ * @param mixed $value
+ */
 function dd($value)
 {
     echo "<pre>";
@@ -13,6 +25,11 @@ function dd($value)
     die();
 }
 
+/**
+ * Get the current URI.
+ *
+ * @return string
+ */
 function getURI(): string
 {
     return parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
@@ -45,16 +62,28 @@ function requireRole($role)
 
 /**
  * Redirect users who are not logged in.
+ * 
+ * FIX: Instead of redirecting to "/login" (which would send the user to http://localhost/login),
+ * we use the BASE_URL constant so the user is redirected to the correct URL: http://localhost/hris_mpc/login.
  */
 function ensureLoggedIn()
 {
     if (!isset($_SESSION['user_id'])) {
-        header('Location: /login');
+        header('Location: ' . BASE_URL . '/login');
         exit();
     }
 }
 
-function uploadImage($fileInputName, $uploadDir = 'uploads/employees/') {
+/**
+ * Uploads an image file from the specified input.
+ *
+ * @param string $fileInputName The name attribute of the file input.
+ * @param string $uploadDir The directory to which the file should be uploaded.
+ * @return string|null The path to the uploaded image (prefixed with a slash) or null if no file was uploaded.
+ * @throws Exception If the file type is invalid, too large, or cannot be moved.
+ */
+function uploadImage($fileInputName, $uploadDir = 'uploads/employees/')
+{
     if (isset($_FILES[$fileInputName]) && $_FILES[$fileInputName]['error'] === UPLOAD_ERR_OK) {
         $fileTmpPath = $_FILES[$fileInputName]['tmp_name'];
         $fileName = $_FILES[$fileInputName]['name'];
@@ -77,7 +106,7 @@ function uploadImage($fileInputName, $uploadDir = 'uploads/employees/') {
                 $dest_path = $uploadDir . $newFileName;
 
                 if (move_uploaded_file($fileTmpPath, $dest_path)) {
-                    return '/' . $dest_path; // Return the path to be stored in the database
+                    return '/' . $dest_path; // Return the path (with a leading slash) for storing in the DB
                 } else {
                     throw new Exception('Error moving the uploaded file.');
                 }

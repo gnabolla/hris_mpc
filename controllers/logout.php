@@ -5,6 +5,6 @@ session_start();
 session_unset();
 session_destroy();
 
-// Redirect to login page
-header('Location: /login');
+// Redirect to the login page using BASE_URL
+header('Location: ' . BASE_URL . '/login');
 exit();
